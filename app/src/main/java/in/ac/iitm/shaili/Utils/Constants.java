@@ -7,16 +7,8 @@ import android.os.Environment;
  */
 public class Constants {
 
-    public static final int PACK_VERSION = 1;
-
     public static final String SHAILI_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Shaili Data";
 
-    public static final String SHAILI_TESSDATA_PATH = SHAILI_PATH+"/tessdata";
-    public static String[] dataPacks = {
-            "eng.traineddata",
-            "hin.traineddata"
-    };
+    public static final String URL_PROCESSING = "http://e9646e5d.ngrok.io/upload";
 
-    public static final String ENG_PACK_PATH = SHAILI_PATH+"/"+dataPacks[0];
-    public static final String HIN_PACK_PATH = SHAILI_PATH+"/"+dataPacks[1];
 }

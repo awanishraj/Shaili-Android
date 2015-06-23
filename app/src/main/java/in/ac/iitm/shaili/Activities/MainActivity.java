@@ -11,7 +11,6 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.hardware.Camera;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -21,7 +20,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.AlphaAnimation;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import org.json.JSONException;
 
@@ -30,12 +31,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import in.ac.iitm.shaili.Helpers.AssetExtractor;
 import in.ac.iitm.shaili.Helpers.BitmapProcessor;
 import in.ac.iitm.shaili.Helpers.MediaHelper;
 import in.ac.iitm.shaili.Objects.RectLocation;
 import in.ac.iitm.shaili.R;
-import in.ac.iitm.shaili.Utils.SPUtil;
 import in.ac.iitm.shaili.Views.CameraPreview;
 
 public class MainActivity extends Activity {
@@ -54,37 +53,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        if (!SPUtil.isPackLatest(this)) {
-            new AsyncTask<Void, Void, Void>() {
-
-                ProgressDialog pd;
-
-                @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-                    pd = ProgressDialog.show(MainActivity.this, "Unpacking training data", "Please wait...", true);
-                }
-
-                @Override
-                protected Void doInBackground(Void... params) {
-                    try {
-                        AssetExtractor.unpack(MainActivity.this);
-                        SPUtil.updatePackVersion(MainActivity.this);
-                    } catch (IOException e) {
-                        Log.e(LOG_TAG, "Extraction failed");
-                    }
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    super.onPostExecute(aVoid);
-                    pd.dismiss();
-                }
-            }.execute();
-
-        }
         setContentView(R.layout.activity_main);
+
 
         // Create second surface with another holder (holderTransparent)
         transparentView = (SurfaceView) findViewById(R.id.TransparentView);
@@ -112,6 +82,13 @@ public class MainActivity extends Activity {
             }
         });
 
+
+        ImageView iv = (ImageView) findViewById(R.id.iv_splash);
+        AlphaAnimation animation1 = new AlphaAnimation(1.0f, 0.0f);
+        animation1.setDuration(800);
+        animation1.setStartOffset(1200);
+        animation1.setFillAfter(true);
+        iv.startAnimation(animation1);
         // Add a listener to the Capture button
         // get an image from the camera
     }

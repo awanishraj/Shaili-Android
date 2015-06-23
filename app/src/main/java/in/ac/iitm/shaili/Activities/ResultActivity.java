@@ -2,8 +2,6 @@ package in.ac.iitm.shaili.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,11 +10,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.googlecode.tesseract.android.TessBaseAPI;
 
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 
 import in.ac.iitm.shaili.Helpers.CropTransform;
+import in.ac.iitm.shaili.Network.MultipartPost;
 import in.ac.iitm.shaili.Objects.RectLocation;
 import in.ac.iitm.shaili.R;
 import in.ac.iitm.shaili.Utils.Constants;
@@ -72,22 +73,20 @@ public class ResultActivity extends Activity {
             protected String doInBackground(Void... params) {
 
                 oldtime1 = System.currentTimeMillis();
-                Bitmap bmp = BitmapFactory.decodeFile(filePath);
-                TessBaseAPI baseApi = new TessBaseAPI();
-                baseApi.init(Constants.SHAILI_PATH, "eng");
-                Log.e(LOG_TAG, "Time in init - " + ((System.currentTimeMillis() - oldtime1) / 1000.0) + "s");
-                long oldtime = System.currentTimeMillis();
-                baseApi.setImage(bmp);
-                Log.e(LOG_TAG, "Time in setting image - " + ((System.currentTimeMillis() - oldtime) / 1000.0) + "s");
-                oldtime = System.currentTimeMillis();
+                try {
+                    MultipartPost multipartPost = new MultipartPost(Constants.URL_PROCESSING);
+                    multipartPost.addFileEntity("image", "image/png", filePath);
+                    JSONObject response = new JSONObject(multipartPost.executeRequest());
+                    String ocr = response.getString("ocr");
+                    String translation = response.getString("trans");
+                    return ocr+"\n"+translation;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
-                String recognizedText = baseApi.getUTF8Text();
-                Log.e(LOG_TAG, "Time in getting text - " + ((System.currentTimeMillis() - oldtime) / 1000.0) + "s");
-
-                Log.e(LOG_TAG, "Recognized text - " + recognizedText);
-                baseApi.end();
-
-                return recognizedText;
+                return "Unable to connect to the server";
             }
 
             @Override
