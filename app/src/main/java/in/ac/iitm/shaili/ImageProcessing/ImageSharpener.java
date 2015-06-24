@@ -1,4 +1,4 @@
-package in.ac.iitm.shaili.Helpers;
+package in.ac.iitm.shaili.ImageProcessing;
 
 import android.content.Context;
 import android.graphics.Bitmap;

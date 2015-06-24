@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2015 Sridhar Ananthakrishnan
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package in.ac.iitm.shaili.Helpers;
+package in.ac.iitm.shaili.ImageProcessing;
 
 
 import android.graphics.Bitmap;
@@ -26,7 +26,11 @@ import android.graphics.Paint;
 
 public class ImageBinarize {
 
-    //Luminance Method
+    /**
+     * Luminance method for converting image to grayscale
+     * @param mOrginalImage
+     * @return
+     */
     public static Bitmap toGray(Bitmap mOrginalImage) {
 
         final int imgWidth = mOrginalImage.getWidth();
@@ -43,11 +47,14 @@ public class ImageBinarize {
         return lum;
     }
 
-    public Bitmap toGrayscale(Bitmap bmpOriginal)
-    {
-        int width, height;
-        height = bmpOriginal.getHeight();
-        width = bmpOriginal.getWidth();
+    /**
+     * Method to convert RGB bitmap to grayscale
+     * @param bmpOriginal
+     * @return
+     */
+    public static Bitmap toGrayscale(Bitmap bmpOriginal) {
+        final int height = bmpOriginal.getHeight();
+        final int width = bmpOriginal.getWidth();
 
         Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(bmpGrayscale);
@@ -60,21 +67,25 @@ public class ImageBinarize {
         return bmpGrayscale;
     }
 
-    //Return histogram of the Image
+    /**
+     * Return a histogram of the pixels in the image based for 256 levels.
+     * @param mImage
+     * @return
+     */
     public static int[] mImageHistogram(Bitmap mImage) {
 
         int[] histogram = new int[256];
 
         int mPixel;
-        int  redValue;
+        int redValue;
 
 
-        for(int i=0; i<histogram.length; i++) {
+        for (int i = 0; i < histogram.length; i++) {
             histogram[i] = 0;
         }
 
-        for(int i=0; i<mImage.getWidth(); i++){
-            for(int j=0; j<mImage.getHeight(); j++){
+        for (int i = 0; i < mImage.getWidth(); i++) {
+            for (int j = 0; j < mImage.getHeight(); j++) {
                 mPixel = mImage.getPixel(i, j);
                 redValue = Color.red(mPixel);
                 histogram[redValue]++;
@@ -85,14 +96,18 @@ public class ImageBinarize {
         return histogram;
     }
 
-    //Get binary treshold using Otsu's Method
+    /**
+     * Method to obtain threshold value as per Otsu thresholding algorithm
+     * @param Original
+     * @return
+     */
     private static int mOtsuTreshold(Bitmap Original) {
         int[] histogram = mImageHistogram(Original);
         int total = Original.getHeight() * Original.getWidth();
 
         float sum = 0;
-        for(int i=0; i<256; i++) {
-            sum += i*histogram[i];
+        for (int i = 0; i < 256; i++) {
+            sum += i * histogram[i];
         }
 
         float sumB = 0;
@@ -102,12 +117,12 @@ public class ImageBinarize {
         float varMax = 0;
         int threshold = 0;
 
-        for(int i=0; i<256; i++) {
+        for (int i = 0; i < 256; i++) {
             wB += histogram[i];
-            if(wB == 0) continue;
+            if (wB == 0) continue;
             wF = total - wB;
 
-            if(wF == 0) break;
+            if (wF == 0) break;
 
             sumB += (float) (i * histogram[i]);
             float mB = sumB / wB;
@@ -115,7 +130,7 @@ public class ImageBinarize {
 
             float varBetween = (float) wB * (float) wF * (mB - mF) * (mB - mF);
 
-            if(varBetween > varMax) {
+            if (varBetween > varMax) {
                 varMax = varBetween;
                 threshold = i;
             }
@@ -124,6 +139,11 @@ public class ImageBinarize {
         return threshold;
     }
 
+    /**
+     * Binarizing the given image.
+     * @param original
+     * @return
+     */
     public static Bitmap binarize(Bitmap original) {
 
         int red, alpha;
@@ -133,14 +153,14 @@ public class ImageBinarize {
 
         final Bitmap binarized = Bitmap.createBitmap(original);
 
-        for(int i=0; i<original.getWidth(); i++){
-            for(int j=0; j<original.getHeight(); j++){
-              //Get Pixels
-              mPixel = original.getPixel(i, j);
-              red = Color.red(mPixel);
-              alpha = Color.alpha(mPixel);
+        for (int i = 0; i < original.getWidth(); i++) {
+            for (int j = 0; j < original.getHeight(); j++) {
+                //Get Pixels
+                mPixel = original.getPixel(i, j);
+                red = Color.red(mPixel);
+                alpha = Color.alpha(mPixel);
 
-                if(red > threshold) {
+                if (red > threshold) {
                     newPixel = 255;
                 } else {
                     newPixel = 0;
@@ -155,14 +175,23 @@ public class ImageBinarize {
 
     }
 
-    //Convert R, G, B, Alpha to standard 8 bit
+    /**
+     * Converting ARGB values to pixel value
+     * @param alpha
+     * @param red
+     * @param green
+     * @param blue
+     * @return
+     */
     private static int colorToRGB(int alpha, int red, int green, int blue) {
 
         int newPixel = 0;
         newPixel += alpha;
         newPixel = newPixel << 8;
-        newPixel += red; newPixel = newPixel << 8;
-        newPixel += green; newPixel = newPixel << 8;
+        newPixel += red;
+        newPixel = newPixel << 8;
+        newPixel += green;
+        newPixel = newPixel << 8;
         newPixel += blue;
 
         return newPixel;

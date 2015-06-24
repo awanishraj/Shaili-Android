@@ -29,8 +29,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         super(context);
         mCamera = camera;
         mSupportedPreviewSizes = mCamera.getParameters().getSupportedPreviewSizes();
-
-
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed.
         mHolder = getHolder();
@@ -57,9 +55,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         // The Surface has been created, now tell the camera where to draw the preview.
         try {
 
+            /**
+             * If no existing instance is null, request for new instance.
+             */
             if (mCamera == null)
                 mCamera = getCameraInstance();
-
 
             /**
              * Querying the supported preview sizes
@@ -74,24 +74,13 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             /**
              * Setting jpeg-quality parameter
              */
-//            parameters.set("jpeg-quality", 100);
-//            parameters.setJpegQuality(90);
-//            parameters.setPictureFormat(ImageFormat.JPEG);
-            parameters.setJpegQuality(70);
-//            parameters.setPictureFormat(PixelFormat.RGB_565);
             parameters.setPictureFormat(ImageFormat.JPEG);
-
-            parameters.setSceneMode(Camera.Parameters.SCENE_MODE_STEADYPHOTO);
-//            parameters.setPictureFormat(PixelFormat.OPAQUE);
+            parameters.setJpegQuality(70);
 
             /**
-             * Setting the capture size
+             * Setting scene for steady shot
              */
-            List<Camera.Size> abc = parameters.getSupportedPictureSizes();
-            parameters.setPictureSize(abc.get(0).width, abc.get(0).height);
-
-            Camera.Size ab = parameters.getPictureSize();
-            Log.d(LOG_TAG, "Current picture size: " + ab.width + " x " + ab.height);
+            parameters.setSceneMode(Camera.Parameters.SCENE_MODE_STEADYPHOTO);
 
             /**
              * Setting the focus mode
@@ -106,6 +95,9 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
             Log.e(LOG_TAG, "Preview size: " + mPreviewSize.width + " - " + mPreviewSize.height);
 
+            /**
+             * Setting the parameters and starting the preview
+             */
             mCamera.setParameters(parameters);
             mCamera.setPreviewDisplay(holder);
             mCamera.startPreview();
@@ -116,6 +108,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
     }
 
+    /**
+     * TODO Needs modification for supporting multiple devices.
+     * @param widthMeasureSpec
+     * @param heightMeasureSpec
+     */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         final int width = resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
@@ -138,6 +135,13 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
 
+    /**
+     * Method to obtain the optimal camera preview size
+     * @param sizes
+     * @param w
+     * @param h
+     * @return
+     */
     private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
         final double ASPECT_TOLERANCE = 0.1;
         double targetRatio = (double) h / w;
@@ -150,6 +154,9 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         int targetHeight = h;
 
+        /**
+         * Go through the available sizes and choose the optimal size for aspect ratio
+         */
         for (Camera.Size size : sizes) {
             double ratio = (double) size.height / size.width;
             if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
@@ -161,6 +168,9 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             }
         }
 
+        /**
+         * If no optimal size found, choose the optimal without considering aspect ratio
+         */
         if (optimalSize == null) {
             minDiff = Double.MAX_VALUE;
             for (Camera.Size size : sizes) {
@@ -208,6 +218,9 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
     }
 
+    /**
+     * Method to release the camera
+     */
     private void releaseCamera() {
         if (mCamera != null) {
             mCamera.release();        // release the camera for other applications

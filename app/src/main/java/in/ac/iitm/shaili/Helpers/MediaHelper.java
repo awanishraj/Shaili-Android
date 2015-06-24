@@ -8,50 +8,42 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import in.ac.iitm.shaili.Utils.Constants;
+
 /**
  * Created by Awanish Raj on 19/06/15.
  */
 public class MediaHelper {
 
-    public static final int MEDIA_TYPE_IMAGE = 1;
-    public static final int MEDIA_TYPE_VIDEO = 2;
+    private static final String LOG_TAG = "MediaHelper";
 
-    /** Create a file Uri for saving an image or video */
-    public static Uri getOutputMediaFileUri(int type){
-        return Uri.fromFile(getOutputMediaFile(type));
+    /**
+     * Create a file Uri for saving an image or video
+     */
+    public static Uri getOutputMediaFileUri() {
+        return Uri.fromFile(getOutputMediaFile());
     }
 
-    /** Create a File for saving an image or video */
-    public static File getOutputMediaFile(int type){
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
+    /**
+     * Create a File for saving an image or video
+     */
+    public static File getOutputMediaFile() {
 
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "Shaili Captures");
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
+                Environment.DIRECTORY_PICTURES), Constants.CAPTURE_PATH);
 
-        // Create the storage directory if it does not exist
-        if (! mediaStorageDir.exists()){
-            if (! mediaStorageDir.mkdirs()){
-                Log.d("MyCameraApp", "failed to create directory");
+        /**
+         * Create directory if it does not exist
+         */
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.d(LOG_TAG, "failed to create directory");
                 return null;
             }
         }
 
-        // Create a media file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile;
-        if (type == MEDIA_TYPE_IMAGE){
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_"+ timeStamp + ".jpg");
-        } else if(type == MEDIA_TYPE_VIDEO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_"+ timeStamp + ".mp4");
-        } else {
-            return null;
-        }
-
-        return mediaFile;
+        return new File(mediaStorageDir.getPath() + File.separator +
+                "SHAILI_" + timeStamp + ".png");
     }
 }
