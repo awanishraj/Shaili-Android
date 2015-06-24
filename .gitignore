@@ -25,3 +25,8 @@ proguard/
 
 # Log Files
 *.log
+
+# Idea folder
+.idea/
+
+Shaili.iml
