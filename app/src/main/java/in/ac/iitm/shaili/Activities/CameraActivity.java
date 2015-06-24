@@ -41,6 +41,7 @@ public class CameraActivity extends Activity {
     private SurfaceView transparentView;
     private SurfaceHolder holderTransparent;
     RectLocation cropLocation = new RectLocation();
+    FrameLayout preview;
 
 
     private static final String LOG_TAG = "CameraActivity";
@@ -74,7 +75,7 @@ public class CameraActivity extends Activity {
          */
         mCamera = getCameraInstance();
         mPreview = new CameraPreview(this, mCamera);
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+        preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
         preview.setOnTouchListener(onTouchListener);
 
@@ -83,8 +84,8 @@ public class CameraActivity extends Activity {
          */
         ImageView iv = (ImageView) findViewById(R.id.iv_splash);
         AlphaAnimation animation1 = new AlphaAnimation(1.0f, 0.0f);
-        animation1.setDuration(800);
-        animation1.setStartOffset(1200);
+        animation1.setDuration(600);
+        animation1.setStartOffset(1000);
         animation1.setFillAfter(true);
         iv.startAnimation(animation1);
     }
@@ -163,6 +164,7 @@ public class CameraActivity extends Activity {
                      * Attempt to capture image when touch is released
                      */
                     try {
+                        preview.setOnTouchListener(null);
                         mCamera.takePicture(null, null, mPicture);
                     } catch (Throwable e) {
                         Log.e(LOG_TAG, "Capture failed");
