@@ -24,11 +24,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
-import in.ac.iitm.shaili.Helpers.MediaHelper;
+import in.ac.iitm.shaili.Helpers.BitmapWriter;
 import in.ac.iitm.shaili.ImageProcessing.BitmapProcessor;
 import in.ac.iitm.shaili.Objects.RectLocation;
 import in.ac.iitm.shaili.R;
@@ -84,7 +81,7 @@ public class CameraActivity extends Activity {
          */
         ImageView iv = (ImageView) findViewById(R.id.iv_splash);
         AlphaAnimation animation1 = new AlphaAnimation(1.0f, 0.0f);
-        animation1.setDuration(600);
+        animation1.setDuration(500);
         animation1.setStartOffset(1000);
         animation1.setFillAfter(true);
         iv.startAnimation(animation1);
@@ -230,37 +227,16 @@ public class CameraActivity extends Activity {
                      */
                     Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
 
-                    long oldTime = System.currentTimeMillis();
-
                     /**
-                     * Running the processor for binarization and cropping
+                     * Processing bitmaps and writing to file
                      */
-                    Bitmap transformed = BitmapProcessor.process(bmp, normLoc);
-                    Log.d(LOG_TAG, "TIme taken for the processing : " + (System.currentTimeMillis() - oldTime) / 1000.0 + "s");
+                    BitmapWriter.write(BitmapProcessor.process(bmp, normLoc, BitmapProcessor.TYPE_NONE), "NONE");    //TODO ONLY FOR COMPARISON SAKE
+                    BitmapWriter.write(BitmapProcessor.process(bmp, normLoc, BitmapProcessor.TYPE_OTSU), "OTSU");    //TODO ONLY FOR COMPARISON SAKE
+                    pictureFile = BitmapWriter.write(BitmapProcessor.process(bmp, normLoc, BitmapProcessor.TYPE_ADAPTIVE), "ADAP");
 
-                    /**
-                     * Creating a png file on disk
-                     */
-                    pictureFile = MediaHelper.getOutputMediaFile();
-                    if (pictureFile == null) {
-                        Log.d(LOG_TAG, "Error creating media file, check storage permissions: ");
-                        return false;
-                    }
+                    bmp.recycle();
 
-                    /**
-                     * Compressing bitmap into file as PNG
-                     */
-                    try {
-                        FileOutputStream fos = new FileOutputStream(pictureFile);
-                        transformed.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                        fos.close();
-                        return true;
-                    } catch (FileNotFoundException e) {
-                        Log.d(LOG_TAG, "File not found: " + e.getMessage());
-                    } catch (IOException e) {
-                        Log.d(LOG_TAG, "Error accessing file: " + e.getMessage());
-                    }
-                    return false;
+                    return pictureFile != null;
                 }
 
                 @Override
@@ -287,6 +263,8 @@ public class CameraActivity extends Activity {
 
         }
     };
+
+
 
 
 }

@@ -88,7 +88,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
 
             /**
-             * Setting the preview size
+             * Setting the preview and picture size
              */
             parameters.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
             parameters.setPictureSize(mPreviewSize.width, mPreviewSize.height);

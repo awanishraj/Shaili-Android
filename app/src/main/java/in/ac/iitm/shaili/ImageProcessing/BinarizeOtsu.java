@@ -18,57 +18,13 @@ package in.ac.iitm.shaili.ImageProcessing;
 
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Paint;
 
-public class ImageBinarize {
-
-    /**
-     * Luminance method for converting image to grayscale
-     * @param mOrginalImage
-     * @return
-     */
-    public static Bitmap toGray(Bitmap mOrginalImage) {
-
-        final int imgWidth = mOrginalImage.getWidth();
-        final int imgHeight = mOrginalImage.getHeight();
-
-        final Bitmap lum = Bitmap.createBitmap(imgWidth, imgHeight, Bitmap.Config.ARGB_8888);
-        final Canvas mBitmapCanvas = new Canvas(lum);
-        final Paint mPaint = new Paint();
-        final ColorMatrix mColorMatrix = new ColorMatrix();
-        mColorMatrix.setSaturation(0);
-        final ColorMatrixColorFilter mColorMatrixColorFilter = new ColorMatrixColorFilter(mColorMatrix);
-        mPaint.setColorFilter(mColorMatrixColorFilter);
-        mBitmapCanvas.drawBitmap(mOrginalImage, 0, 0, mPaint);
-        return lum;
-    }
-
-    /**
-     * Method to convert RGB bitmap to grayscale
-     * @param bmpOriginal
-     * @return
-     */
-    public static Bitmap toGrayscale(Bitmap bmpOriginal) {
-        final int height = bmpOriginal.getHeight();
-        final int width = bmpOriginal.getWidth();
-
-        Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(bmpGrayscale);
-        Paint paint = new Paint();
-        ColorMatrix cm = new ColorMatrix();
-        cm.setSaturation(0);
-        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
-        paint.setColorFilter(f);
-        c.drawBitmap(bmpOriginal, 0, 0, paint);
-        return bmpGrayscale;
-    }
+public class BinarizeOtsu {
 
     /**
      * Return a histogram of the pixels in the image based for 256 levels.
+     *
      * @param mImage
      * @return
      */
@@ -98,6 +54,7 @@ public class ImageBinarize {
 
     /**
      * Method to obtain threshold value as per Otsu thresholding algorithm
+     *
      * @param Original
      * @return
      */
@@ -141,10 +98,11 @@ public class ImageBinarize {
 
     /**
      * Binarizing the given image.
+     *
      * @param original
      * @return
      */
-    public static Bitmap binarize(Bitmap original) {
+    public static Bitmap thresh(Bitmap original) {
 
         int red, alpha;
         int newPixel, mPixel;
@@ -166,7 +124,8 @@ public class ImageBinarize {
                     newPixel = 0;
                 }
 
-                newPixel = colorToRGB(alpha, newPixel, newPixel, newPixel);
+//                newPixel = colorToRGB(alpha, newPixel, newPixel, newPixel);
+                newPixel = Color.argb(alpha, newPixel, newPixel, newPixel);
                 binarized.setPixel(i, j, newPixel);
             }
         }
@@ -177,6 +136,7 @@ public class ImageBinarize {
 
     /**
      * Converting ARGB values to pixel value
+     *
      * @param alpha
      * @param red
      * @param green
@@ -197,5 +157,7 @@ public class ImageBinarize {
         return newPixel;
 
     }
+
+
 
 }

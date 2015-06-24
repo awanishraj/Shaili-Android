@@ -20,14 +20,14 @@ public class MediaHelper {
     /**
      * Create a file Uri for saving an image or video
      */
-    public static Uri getOutputMediaFileUri() {
-        return Uri.fromFile(getOutputMediaFile());
+    public static Uri getOutputMediaFileUri(String suffix) {
+        return Uri.fromFile(getOutputMediaFile(suffix));
     }
 
     /**
      * Create a File for saving an image or video
      */
-    public static File getOutputMediaFile() {
+    public static File getOutputMediaFile(String suffix) {
 
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), Constants.CAPTURE_PATH);
@@ -44,6 +44,6 @@ public class MediaHelper {
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         return new File(mediaStorageDir.getPath() + File.separator +
-                "SHAILI_" + timeStamp + ".png");
+                "SHAILI_" + timeStamp + "_" + suffix + ".png");
     }
 }

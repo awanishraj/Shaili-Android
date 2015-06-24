@@ -10,7 +10,14 @@ import in.ac.iitm.shaili.Objects.RectLocation;
  */
 public class BitmapProcessor {
 
-    private static final String LOG_TAG = "BitmapProcesor";
+    private static final String LOG_TAG = "BitmapProcessor";
+
+    /**
+     * For comparing different images.
+     */
+    public static final String TYPE_NONE = "NONE";
+    public static final String TYPE_OTSU = "OTSU";
+    public static final String TYPE_ADAPTIVE = "ADAP";
 
     /**
      * Method that binarizes and crops the input image
@@ -19,7 +26,7 @@ public class BitmapProcessor {
      * @param cropLocation
      * @return
      */
-    public static Bitmap process(Bitmap toTransform, RectLocation cropLocation) {
+    public static Bitmap process(Bitmap toTransform, RectLocation cropLocation, String type) {
 
         /**
          * Getting the dimensions of the rectangle
@@ -59,19 +66,21 @@ public class BitmapProcessor {
             e.printStackTrace();
         }
 
-//        /**
-//         * Sharpening the image before binarization
-//         */
-//        long startTime1 = System.currentTimeMillis();
-//        myTransformedBitmap = ImageSharpener.sharpenBitmap(myTransformedBitmap, ConvoMatrices.getConvolutionMatrix(9),context);
-//        Log.e(LOG_TAG, "Time taken for sharpening = " + (System.currentTimeMillis() - startTime1) / 1000.0 + "s");
-
         /**
-         * Binarizing the image
+         * Binarizing the image based on input type
          */
         long startTime = System.currentTimeMillis();
-        myTransformedBitmap = ImageBinarize.binarize(myTransformedBitmap);
-        Log.e(LOG_TAG, "Time taken for binarization = " + (System.currentTimeMillis() - startTime) / 1000.0 + "s");
+        switch (type) {
+            case TYPE_NONE:
+                break;
+            case TYPE_OTSU:
+                myTransformedBitmap = BinarizeOtsu.thresh(myTransformedBitmap);
+                break;
+            case TYPE_ADAPTIVE:
+                myTransformedBitmap = BinarizeAdaptive.thresh(myTransformedBitmap);
+                break;
+        }
+        Log.e(LOG_TAG, "Time taken for "+type+" binarizartion = " + (System.currentTimeMillis() - startTime) / 1000.0 + "s");
 
 
         return myTransformedBitmap;
